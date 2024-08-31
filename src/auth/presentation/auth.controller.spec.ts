@@ -29,6 +29,7 @@ describe('AuthController', () => {
     it('should call AuthService.register and return the result', async () => {
       const registerDto: RegisterRequestDto = {
         email: 'test@example.com',
+        username: 'test',
         password: 'password',
       };
       const result = { accessToken: 'token' };

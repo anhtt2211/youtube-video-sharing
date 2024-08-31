@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class LoginRequestDto {
   @IsEmail()
@@ -9,7 +9,11 @@ export class LoginRequestDto {
   password: string;
 }
 
-export class RegisterRequestDto extends LoginRequestDto {}
+export class RegisterRequestDto extends LoginRequestDto {
+  @IsString()
+  @IsNotEmpty()
+  username: string;
+}
 
 export class LoginResponseDto {
   accessToken: string;

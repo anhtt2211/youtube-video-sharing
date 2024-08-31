@@ -3,8 +3,8 @@ import { VideoService } from './applications/video.service';
 import { VideoGateway } from './applications/video.socket';
 import { VideoController } from './presentation/video.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserEntity } from 'src/user/entities/user.entity';
 import { VideoEntity } from './entities/video.entity';
+import { UserEntity } from 'src/user/entities/user.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity, VideoEntity])],

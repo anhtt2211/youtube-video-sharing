@@ -94,6 +94,7 @@ describe('AuthService', () => {
     it('should register a new user and return access token', async () => {
       const registerDto: RegisterRequestDto = {
         email: 'test@example.com',
+        username: 'test',
         password: 'password',
       };
       const user = { id: uuidv4(), ...registerDto };
@@ -110,6 +111,7 @@ describe('AuthService', () => {
     it('should throw an error if user already exists', async () => {
       const registerDto: RegisterRequestDto = {
         email: 'test@example.com',
+        username: 'test',
         password: 'password',
       };
       const user = { id: uuidv4(), ...registerDto };
