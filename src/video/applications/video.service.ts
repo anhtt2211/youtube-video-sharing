@@ -4,12 +4,14 @@ import { UserEntity } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { VideoEntity } from '../entities/video.entity';
 import { ITokenPayload } from 'src/shared/interfaces/token-payload.interface';
+import { VideoGateway } from './video.socket';
 
 @Injectable()
 export class VideoService {
   constructor(
     @InjectRepository(VideoEntity)
     private videoRepository: Repository<VideoEntity>,
+    private readonly videoGateway: VideoGateway,
   ) {}
 
   async create(
@@ -21,6 +23,7 @@ export class VideoService {
     }
 
     const newVideo = this.videoRepository.create({ ...video, user });
+    this.videoGateway.notifyNewVideo(newVideo);
     return this.videoRepository.save(newVideo);
   }
 

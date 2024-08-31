@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
 import { InfrastructureModule } from './infrastructure/infrastructure.module';
+import { NotificationModule } from './notification/notification.module';
+import { TransformInterceptor } from './shared/interceptors/response.interceptor';
 import { UserModule } from './user/user.module';
 import { VideoModule } from './video/video.module';
-import { ConfigModule } from '@nestjs/config';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { TransformInterceptor } from './shared/interceptors/response.interceptor';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { TransformInterceptor } from './shared/interceptors/response.interceptor
     UserModule,
     VideoModule,
     AuthModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [

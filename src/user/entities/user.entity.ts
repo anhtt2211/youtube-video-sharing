@@ -1,4 +1,5 @@
 import * as bcrypt from 'bcrypt';
+import { NotificationEntity } from 'src/notification/entities/notification.entity';
 import { VideoEntity } from 'src/video/entities/video.entity';
 import {
   BeforeInsert,
@@ -29,4 +30,10 @@ export class UserEntity {
 
   @OneToMany(() => VideoEntity, (video) => video.user)
   videos: VideoEntity[];
+
+  @OneToMany(() => NotificationEntity, (notification) => notification.recipient)
+  receivedNotifications: NotificationEntity[];
+
+  @OneToMany(() => NotificationEntity, (notification) => notification.sender)
+  sentNotifications: NotificationEntity[];
 }

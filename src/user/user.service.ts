@@ -26,4 +26,8 @@ export class UserService {
   async findUserByUsername(username: string): Promise<UserEntity | undefined> {
     return this.userRepository.findOne({ where: { username } });
   }
+
+  async getUsers(): Promise<UserEntity[]> {
+    return this.userRepository.find();
+  }
 }
