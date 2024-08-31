@@ -10,23 +10,6 @@ export class UserService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async createUser(
-    username: string,
-    email: string,
-    password: string,
-  ): Promise<UserEntity> {
-    const user = this.userRepository.create({ username, email, password });
-    return this.userRepository.save(user);
-  }
-
-  async findUserByEmail(email: string): Promise<UserEntity | undefined> {
-    return this.userRepository.findOne({ where: { email } });
-  }
-
-  async findUserByUsername(username: string): Promise<UserEntity | undefined> {
-    return this.userRepository.findOne({ where: { username } });
-  }
-
   async getUsers(): Promise<UserEntity[]> {
     return this.userRepository.find();
   }
