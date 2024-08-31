@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
@@ -24,12 +24,12 @@ export class AuthService {
   async login({ email, password }: LoginRequestDto): Promise<LoginResponseDto> {
     const user = await this.userRepository.findOne({ where: { email } });
     if (!user) {
-      throw new Error('User not found');
+      throw new BadRequestException('User not found');
     }
 
     const isPasswordValid = await this.verifyPassword(password, user.password);
     if (!isPasswordValid) {
-      throw new Error('Invalid password');
+      throw new BadRequestException('Invalid password');
     }
 
     const payload: ITokenPayload = {
@@ -45,7 +45,7 @@ export class AuthService {
       where: { email: body.email },
     });
     if (userExists) {
-      throw new Error('User already exists');
+      throw new BadRequestException('User already exists');
     }
 
     const user = await this.userRepository.save(body);
