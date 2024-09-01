@@ -35,6 +35,7 @@ export class AuthService {
     const payload: ITokenPayload = {
       id: user.id,
       email: user.email,
+      username: user.username,
     };
     const accessToken = this.jwtService.sign(payload, { expiresIn: '1h' });
     return { accessToken };
@@ -48,11 +49,16 @@ export class AuthService {
       throw new BadRequestException('User already exists');
     }
 
-    const user = await this.userRepository.save(body);
+    const hashedpassword = await this.hashPassword(body.password);
+    const user = await this.userRepository.save({
+      ...body,
+      password: hashedpassword,
+    });
 
     const payload: ITokenPayload = {
       id: user.id,
       email: user.email,
+      username: user.username,
     };
     const accessToken = this.jwtService.sign(payload, { expiresIn: '1h' });
     return { accessToken };
@@ -63,5 +69,9 @@ export class AuthService {
     storedPassword: string,
   ): Promise<boolean> {
     return bcrypt.compare(password, storedPassword);
+  }
+
+  private async hashPassword(password: string): Promise<string> {
+    return bcrypt.hash(password, 10);
   }
 }
