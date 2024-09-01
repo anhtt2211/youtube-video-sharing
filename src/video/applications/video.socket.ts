@@ -6,11 +6,11 @@ import {
   SubscribeMessage,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { NotificationService } from 'src/notification/notification.service';
 import { VideoEntity } from 'src/video/entities/video.entity';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from '@nestjs/common';
 import { UserService } from 'src/user/application/user.service';
+import { NotificationService } from 'src/notification/application/notification.service';
 
 @WebSocketGateway({
   cors: {

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ITokenPayload } from 'src/shared/interfaces/token-payload.interface';
 import { Repository } from 'typeorm';
-import { NotificationEntity } from './entities/notification.entity';
+import { NotificationEntity } from '../entities/notification.entity';
 
 @Injectable()
 export class NotificationService {
