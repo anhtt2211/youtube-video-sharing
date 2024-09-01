@@ -19,7 +19,7 @@ describe('VideoController', () => {
           provide: VideoService,
           useClass: jest.fn(() => ({
             create: jest.fn(),
-            findAll: jest.fn(),
+            getFeeds: jest.fn(),
           })),
         },
       ],
@@ -59,8 +59,8 @@ describe('VideoController', () => {
     });
   });
 
-  describe('findAll', () => {
-    it('should call VideoService.findAll and return all videos', async () => {
+  describe('getFeeds', () => {
+    it('should call VideoService.getFeeds and return all videos', async () => {
       const videos: VideoEntity[] = [
         {
           id: '1',
@@ -83,7 +83,7 @@ describe('VideoController', () => {
       const result = await videoController.getFeeds();
 
       expect(videoService.getFeeds).toHaveBeenCalled();
-      expect(result).toEqual(videos);
+      expect(result).toEqual(listResponse);
     });
   });
 });

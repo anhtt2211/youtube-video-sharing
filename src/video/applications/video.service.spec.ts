@@ -1,16 +1,30 @@
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { VideoService } from './video.service';
-import { VideoEntity } from '../entities/video.entity';
-import { VideoGateway } from './video.socket';
 import { UserEntity } from 'src/user/entities/user.entity';
-import { BadRequestException } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { VideoEntity } from '../entities/video.entity';
+import { VideoService } from './video.service';
+import { VideoGateway } from './video.socket';
+
+import { ListResponse } from 'src/shared/dtos/response.dto';
+
+const mockConfigService = {
+  get(key: string) {
+    switch (key) {
+      case 'YouTubeApiKey':
+        return 'mock-api-key'; // Example configuration key
+      default:
+        return null;
+    }
+  },
+};
 
 describe('VideoService', () => {
   let service: VideoService;
   let videoRepository: Repository<VideoEntity>;
   let videoGateway: VideoGateway;
+  let configService: ConfigService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -26,6 +40,10 @@ describe('VideoService', () => {
             notifyNewVideo: jest.fn(),
           },
         },
+        {
+          provide: ConfigService,
+          useValue: mockConfigService,
+        },
       ],
     }).compile();
 
@@ -34,62 +52,72 @@ describe('VideoService', () => {
       getRepositoryToken(VideoEntity),
     );
     videoGateway = module.get<VideoGateway>(VideoGateway);
+    configService = module.get<ConfigService>(ConfigService);
   });
 
   describe('create', () => {
-    it('should throw a BadRequestException if the URL is invalid', async () => {
-      const video = { url: 'invalid-url' };
-      const user = {} as UserEntity;
-      await expect(service.create(video, user)).rejects.toThrow(
-        BadRequestException,
-      );
+    it('should throw BadRequestException if URL is invalid', async () => {
+      await expect(
+        service.create({ url: 'invalid-url' }, {} as any),
+      ).rejects.toThrow('Invalid YouTube URL');
     });
 
-    it('should create and save a new video and notify via gateway', async () => {
-      const video = {
-        url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    it('should notify new video after creation', async () => {
+      const mockVideoData: VideoEntity = {
+        url: 'https://youtu.be/validid',
         title: 'Test Video',
-      };
-      const user = { id: '1', username: 'testuser' } as UserEntity;
-      const savedVideo = { ...video, id: '1', user } as VideoEntity;
+        thumbnailUrl: 'https://example.com/thumbnail.jpg',
+        description: 'Description',
+      } as VideoEntity;
 
-      jest.spyOn(videoRepository, 'create').mockReturnValue(savedVideo);
-      jest.spyOn(videoRepository, 'save').mockResolvedValue(savedVideo);
+      jest.spyOn(service as any, 'isValidYouTubeUrl').mockReturnValue(true);
+      jest.spyOn(service as any, 'extractVideoId').mockReturnValue('validid');
+      jest.spyOn(service as any, 'isVideoIdUnique').mockResolvedValue(true);
+      jest
+        .spyOn(service as any, 'fetchYouTubeMetadata')
+        .mockResolvedValue(mockVideoData);
+      jest.spyOn(videoRepository, 'save').mockResolvedValue(mockVideoData);
 
-      const result = await service.create(video, user);
+      const result = await service.create(
+        { url: 'https://youtu.be/validid' },
+        {} as any,
+      );
 
-      expect(videoRepository.create).toHaveBeenCalledWith({ ...video, user });
-      expect(videoRepository.save).toHaveBeenCalledWith(savedVideo);
-      expect(result).toEqual(savedVideo);
-      expect(videoGateway.notifyNewVideo).toHaveBeenCalledWith(savedVideo);
+      expect(result).toEqual(mockVideoData);
+      expect(videoGateway.notifyNewVideo).toHaveBeenCalledWith(mockVideoData);
     });
   });
 
-  describe('findAll', () => {
-    it('should return an array of videos with user relations', async () => {
-      const videos: VideoEntity[] = [
+  describe('getFeeds', () => {
+    it('returns paginated video feeds', async () => {
+      const videoEntities: VideoEntity[] = [
         {
           id: '1',
-          url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-          title: 'Video 1',
-          user: {} as UserEntity,
-        } as VideoEntity,
-        {
-          id: '2',
-          url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-          title: 'Video 2',
+          url: 'https://youtu.be/validid',
+          title: 'Test Video',
           user: {} as UserEntity,
         } as VideoEntity,
       ];
+      const listResponse = new ListResponse<VideoEntity>(
+        videoEntities,
+        1,
+        1,
+        10,
+      );
 
-      jest.spyOn(videoRepository, 'find').mockResolvedValue(videos);
+      jest
+        .spyOn(videoRepository, 'findAndCount')
+        .mockResolvedValue([videoEntities, 1]);
 
-      const result = await service.findAll();
+      const result = await service.getFeeds(1, 10);
 
-      expect(videoRepository.find).toHaveBeenCalledWith({
+      expect(videoRepository.findAndCount).toHaveBeenCalledWith({
         relations: ['user'],
+        order: { updatedAt: 'DESC' },
+        skip: 0,
+        take: 10,
       });
-      expect(result).toEqual(videos);
+      expect(result).toEqual(expect.objectContaining(listResponse));
     });
   });
 });
