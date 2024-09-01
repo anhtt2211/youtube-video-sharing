@@ -3,6 +3,7 @@ import { VideoController } from './video.controller';
 import { VideoService } from '../applications/video.service';
 import { VideoEntity } from '../entities/video.entity';
 import { ITokenPayload } from 'src/shared/interfaces/token-payload.interface';
+import { ListResponse } from 'src/shared/dtos/response.dto';
 
 jest.mock('../applications/video.service');
 
@@ -38,7 +39,11 @@ describe('VideoController', () => {
         url: 'https://www.youtube.com/watch?v=test',
         title: 'Test Video',
       };
-      const user: ITokenPayload = { id: 'user-id', email: 'test@example.com' };
+      const user: ITokenPayload = {
+        id: 'user-id',
+        email: 'test@example.com',
+        username: 'test',
+      };
       const createdVideo = {
         ...videoData,
         id: 'video-id',
@@ -71,11 +76,13 @@ describe('VideoController', () => {
         } as VideoEntity,
       ];
 
-      jest.spyOn(videoService, 'findAll').mockResolvedValue(videos);
+      const listResponse = new ListResponse(videos, videos.length, 1, 10);
 
-      const result = await videoController.findAll();
+      jest.spyOn(videoService, 'getFeeds').mockResolvedValue(listResponse);
 
-      expect(videoService.findAll).toHaveBeenCalled();
+      const result = await videoController.getFeeds();
+
+      expect(videoService.getFeeds).toHaveBeenCalled();
       expect(result).toEqual(videos);
     });
   });
