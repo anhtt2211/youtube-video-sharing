@@ -57,6 +57,21 @@ export class VideoService {
   ): Promise<ListResponse<VideoEntity>> {
     const [items, count] = await this.videoRepository.findAndCount({
       relations: ['user'],
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        url: true,
+        thumbnailUrl: true,
+        videoId: true,
+        createdAt: true,
+        updatedAt: true,
+        user: {
+          id: true,
+          username: true,
+          email: true,
+        },
+      },
       order: { updatedAt: 'DESC' },
       skip: (page - 1) * pageSize,
       take: pageSize,
