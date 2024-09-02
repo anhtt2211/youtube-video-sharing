@@ -1,4 +1,3 @@
-// src/infrastructure/persistence/persistence.module.ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService, ConfigModule } from '@nestjs/config';
@@ -18,6 +17,9 @@ import { ConfigService, ConfigModule } from '@nestjs/config';
         entities: [__dirname + '/../../**/*.entity{.ts,.js}'],
         synchronize: false,
         logging: true,
+        ssl: {
+          rejectUnauthorized: false,
+        },
       }),
     }),
   ],
