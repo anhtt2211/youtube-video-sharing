@@ -12,5 +12,11 @@ export const AppDataSource = new DataSource({
   entities: [__dirname + '/src/**/entities/*.entity.{js,ts}'],
   migrations: ['src/infrastructure/persistence/migrations/*.{js,ts}'],
   migrationsTableName: 'migrations',
+  ssl:
+    process.env.NODE_ENV === 'development'
+      ? false
+      : {
+          rejectUnauthorized: false,
+        },
   logging: true,
 });
