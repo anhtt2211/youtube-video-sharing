@@ -1,73 +1,81 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Youtube Video Sharing Web Application
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Introduction
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+This project is a web application that allows users to register, log in, and share YouTube videos with others. The key features include user registration and login, sharing YouTube videos, viewing a list of shared videos, and real-time notifications when new videos are shared.
 
-## Description
+## Prerequisites
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- Node.js (v14.x or later)
+- npm (v6.x or later)
+- PostgreSQL (v12.x or later)
+- Docker (optional, for deployment)
 
-## Installation
+## Installation & Configuration
 
-```bash
-$ pnpm install
-```
+1. Clone the repository:
+   ```bash
+   https://github.com/anhtt2211/youtube-video-sharing.git
+   cd youtube-video-sharing
+   ```
+2. Install dependencies:
+   ```bash
+   npm install pnpm -g
+   pnpm install
+   ```
+3. Configure your environment variables by make a copy from `.env.example`
 
-## Running the app
+   ```
+   cp .env.example .env
+   ```
 
-```bash
-# development
-$ pnpm run start
+## Database Setup
 
-# watch mode
-$ pnpm run start:dev
+1. Ensure PostgreSQL is running on your machine.
+2. Run the following command to set up the database:
+   ```bash
+   pnpm run migration:run
+   ```
+3. (Optional) Seed the database with initial data:
+   ```bash
+   pnpm run seed
+   ```
 
-# production mode
-$ pnpm run start:prod
-```
+## Running the Application
 
-## Test
+1. Start the development server:
+   ```bash
+   pnpm run start
+   ```
+2. Server start at `http://localhost:8000`.
+3. To run the test suite:
+   ```bash
+   pnpm run test
+   ```
 
-```bash
-# unit tests
-$ pnpm run test
+## (BE/FS) Docker Deployment
 
-# e2e tests
-$ pnpm run test:e2e
+(Optional for Backend developers)
 
-# test coverage
-$ pnpm run test:cov
-```
+1. Run the Docker container:
+   ```bash
+   docker-compose -f docker-compose up -d
+   ```
 
-## Support
+## Usage
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+- **User Registration and Login:** Users can create an account and log in to access the application.
+- **Sharing YouTube Videos:** Once logged in, users can share YouTube video links through a dedicated form.
+- **Viewing Shared Videos:** Users can view a list of all videos shared by other users.
+- **Real-Time Notifications:** Users receive notifications for new video shares displayed as pop-ups or banners, containing the video title and sharer's name.
 
-## Stay in touch
+## Troubleshooting
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- **Issue:** PostgreSQL connection error.
+  - **Solution:** Ensure PostgreSQL is running and the URI in the `.env` file is correct.
+- **Issue:** Application does not start.
 
-## License
+  - **Solution:** Check for any missing dependencies and ensure all environment variables are defined correctly in the `.env` file.
 
-Nest is [MIT licensed](LICENSE).
+- **Issue:** Real-time notifications not working.
+  - **Solution:** Ensure WebSocket connections are correctly established and the server is handling broadcasting correctly.
