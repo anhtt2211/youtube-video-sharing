@@ -22,7 +22,7 @@ import { ConfigService, ConfigModule } from '@nestjs/config';
           configService.get<string>('NODE_ENV') === 'development'
             ? false
             : {
-                rejectUnauthorized: false,
+                rejectUnauthorized: true,
               },
       }),
     }),
